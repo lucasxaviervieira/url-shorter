@@ -16,6 +16,12 @@ def get_urls():
     return jsonify(urls)
 
 
+@url_blueprint.route("/url/<int:url_id>", methods=["GET"])
+def get_url(url_id):
+    url = db.get_url(url_id)
+    return jsonify(url)
+
+
 @url_blueprint.route("/url/", methods=["POST"])
 def create_url():
     try:

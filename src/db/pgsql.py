@@ -55,7 +55,12 @@ class Database:
 
     def get_url(self, id):
         self.cur.execute(f"SELECT * FROM url WHERE id = {id};")
-        return self.cur.fetchone()
+        url = self.cur.fetchone()
+        new_url = {}
+        new_url["id"] = url[0]
+        new_url["original_url"] = url[1]
+        new_url["shorter_url"] = url[2]
+        return new_url
 
     def create_url(self, original_url):
         shorter_url = "http://127.0.0.1:5000/"
