@@ -14,6 +14,10 @@ class Database:
         self.password = DB_PASSWORD
         self.conn = None
 
+    def start(self):
+        self.connect()
+        self.create_table()
+
     def connect(self):
         self.conn = psycopg2.connect(
             host=self.host,
@@ -44,7 +48,7 @@ class Database:
         rows = self.cur.fetchall()
         urls = []
         for row in rows:
-            url = {"id": row[0], "original_id": row[1], "shorter_id": row[2]}
+            url = {"id": row[0], "original_url": row[1], "shorter_url": row[2]}
             urls.append(url)
 
         return urls
@@ -53,11 +57,12 @@ class Database:
         self.cur.execute(f"SELECT * FROM url WHERE id = {id};")
         return self.cur.fetchone()
 
-    def create_url(self, original_url, shorter_url):
+    def create_url(self, original_url):
+        shorter_url = "http://127.0.0.1:5000/"
         self.cur.execute(
             """
             INSERT INTO url (original_url, shorter_url)
-                VALUES (%s, %s)
+                VALUES (%s, %s || currval('url_id_seq'))    
                 RETURNING *;
             """,
             (original_url, shorter_url),
@@ -66,8 +71,8 @@ class Database:
         new_url = self.cur.fetchone()
         new_url = {
             "id": new_url[0],
-            "original_id": new_url[1],
-            "shorter_id": new_url[2],
+            "original_url": new_url[1],
+            "shorter_url": new_url[2],
         }
         return new_url
 
