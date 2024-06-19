@@ -85,6 +85,13 @@ class Database:
         self.cur.execute(f"DELETE FROM url WHERE id = {id};")
         self.conn.commit()
 
+    def url_exists(self, attribute, url):
+        self.cur.execute(
+            f"SELECT EXISTS (SELECT 1 FROM url WHERE {attribute} = '{url}');"
+        )
+        is_url = self.cur.fetchone()
+        return is_url[0]
+
     def dict_url(self, url):
         bytea = self.read_svg_bytea(url[3])
         new_url = {
