@@ -50,40 +50,22 @@ class Database:
 
     def get_urls(self):
         self.cur.execute("SELECT * FROM url;")
-        rows = self.cur.fetchall()
-        urls = []
-        for row in rows:
-            bytea_value = row[3]
-            bytea = self.read_svg_bytea(bytea_value)
-            url = {
-                "id": row[0],
-                "original_url": row[1],
-                "shorter_url": row[2],
-                "svg_qrcode": bytea,
-            }
-            urls.append(url)
-
-        return urls
+        urls = self.cur.fetchall()
+        url_list = []
+        for url in urls:
+            new_url = self.dict_url(url)
+            url_list.append(new_url)
+        return url_list
 
     def get_url(self, id):
         self.cur.execute(f"SELECT * FROM url WHERE id = {id};")
         url = self.cur.fetchone()
-
-        bytea_value = url[3]
-        bytea = self.read_svg_bytea(bytea_value)
-
-        new_url = {}
-        new_url["id"] = url[0]
-        new_url["original_url"] = url[1]
-        new_url["shorter_url"] = url[2]
-        new_url["svg_qrcode"] = bytea
-
+        new_url = self.dict_url(url)
         return new_url
 
     def create_url(self, original_url):
         expiration_date = datetime.now() + timedelta(days=7)
         svg_string = qc.generate_qr_code_with_expiry(original_url, expiration_date)
-
         shorter_url = "http://127.0.0.1:5000/"
 
         self.cur.execute(
@@ -95,22 +77,23 @@ class Database:
             (original_url, shorter_url, svg_string),
         )
         self.conn.commit()
-        new_url = self.cur.fetchone()
-
-        bytea_value = new_url[3]
-        bytea = self.read_svg_bytea(bytea_value)
-
-        new_url = {
-            "id": new_url[0],
-            "original_url": new_url[1],
-            "shorter_url": new_url[2],
-            "svg_data": bytea,
-        }
+        url = self.cur.fetchone()
+        new_url = self.dict_url(url)
         return new_url
 
     def delete_url(self, id):
         self.cur.execute(f"DELETE FROM url WHERE id = {id};")
         self.conn.commit()
+
+    def dict_url(self, url):
+        bytea = self.read_svg_bytea(url[3])
+        new_url = {
+            "id": url[0],
+            "original_url": url[1],
+            "shorter_url": url[2],
+            "svg_qrcode": bytea,
+        }
+        return new_url
 
     def read_svg_bytea(self, bytea_value):
         encoded_data = base64.b64encode(bytea_value).decode("utf-8")
