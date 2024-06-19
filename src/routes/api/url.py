@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from db.pgsql import Database
+from db.main import Database
 
 url_blueprint = Blueprint(
     "url",
