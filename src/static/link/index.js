@@ -4,5 +4,12 @@ async function getUrl(url_id) {
   }
   )
     .then(response => response.json())
-    .then(data => { showUrlShorted(data.shorter_url) });
+    .then(data => { window.location.href = (data.original_url) });
 }
+
+function getLinkId() {
+  const linkId = document.getElementById('link-id').textContent
+  getUrl(linkId)
+}
+
+getLinkId()

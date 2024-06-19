@@ -11,16 +11,22 @@ async function createUrl(original_url) {
   }
   )
     .then(response => response.json())
-    .then(data => { showUrlShorted(data.shorter_url) });
+    .then(data => { showUrlShorted(data) });
 }
 
-function showUrlShorted(shortUrl) {
+function showUrlShorted(data) {
+  const shortUrl = data.shorter_url
+  const qrCode = data.svg_qrcode
   const newUrl = document.getElementById('new-url')
   newUrl.href = shortUrl
   newUrl.innerText = shortUrl
   const div = newUrl.parentNode
   div.classList.remove('cursor-default', 'opacity-0')
+  showCopyLinkButton()
+  showQRCode(qrCode)
+}
 
+function showCopyLinkButton() {
   const copyButton = document.getElementById('copy-button');
 
   copyButton.addEventListener('click', function () {
@@ -38,6 +44,13 @@ function showUrlShorted(shortUrl) {
 
     alert('Link copied to clipboard: ' + shortUrl);
   });
+}
+
+function showQRCode(qrCode) {
+  const qrCodeElement = document.getElementById('qr-code')
+  qrCodeElement.innerHTML = qrCode
+  qrCodeElement.classList.remove('hidden')
+
 
 }
 
