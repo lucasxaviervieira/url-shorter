@@ -12,3 +12,8 @@ def home():
 @app_blueprint.route("/<int:link_id>", methods=["GET"])
 def links(link_id):
     return render_template("link/index.html", link_id=link_id)
+
+
+@app_blueprint.route("/saved-url", methods=["GET"])
+def saved_url():
+    return render_template("saved_url/index.html")

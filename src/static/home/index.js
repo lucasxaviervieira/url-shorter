@@ -11,10 +11,23 @@ async function createUrl(original_url) {
   }
   )
     .then(response => response.json())
-    .then(data => { showUrlShorted(data) });
+    .then(data => { verifyResponse(data) });
+}
+
+function verifyResponse(responseData) {
+  const messageError = 'This URL exists'
+
+  if (responseData.message == messageError) {
+    alert('já existe')
+  }
+  else {
+    showUrlShorted(responseData)
+  }
+
 }
 
 function showUrlShorted(data) {
+  const originalUrl = data.original_url
   const shortUrl = data.shorter_url
   const qrCode = data.svg_qrcode
   const newUrl = document.getElementById('new-url')
@@ -22,16 +35,16 @@ function showUrlShorted(data) {
   newUrl.innerText = shortUrl
   const div = newUrl.parentNode
   div.classList.remove('cursor-default', 'opacity-0')
-  showCopyLinkButton()
+  showCopyLinkButton(originalUrl)
   showQRCode(qrCode)
 }
 
-function showCopyLinkButton() {
+function showCopyLinkButton(originalUrl) {
   const copyButton = document.getElementById('copy-button');
 
   copyButton.addEventListener('click', function () {
     const tempInput = document.createElement('input');
-    tempInput.value = shortUrl;
+    tempInput.value = originalUrl;
     document.body.appendChild(tempInput);
 
 
@@ -42,7 +55,7 @@ function showCopyLinkButton() {
 
     document.body.removeChild(tempInput);
 
-    alert('Link copied to clipboard: ' + shortUrl);
+    alert('Link copied to clipboard: ' + originalUrl);
   });
 }
 
@@ -50,11 +63,9 @@ function showQRCode(qrCode) {
   const qrCodeElement = document.getElementById('qr-code')
   qrCodeElement.innerHTML = qrCode
   qrCodeElement.classList.remove('hidden')
-
-
 }
 
-function shortUrl() {
+function startShorter() {
   const form = document.getElementById('url-form')
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -66,4 +77,4 @@ function shortUrl() {
   });
 }
 
-shortUrl()
+startShorter()
