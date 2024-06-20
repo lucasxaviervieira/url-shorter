@@ -89,8 +89,8 @@ class Database:
         self.cur.execute(
             f"SELECT EXISTS (SELECT 1 FROM url WHERE {attribute} = '{url}');"
         )
-        is_url = self.cur.fetchone()
-        return is_url[0]
+        url_exists = self.cur.fetchone()
+        return url_exists[0]
 
     def dict_url(self, url):
         bytea = self.read_svg_bytea(url[3])

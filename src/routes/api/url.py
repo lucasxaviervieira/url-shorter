@@ -20,9 +20,9 @@ def get_urls():
 def get_url(url_id):
     try:
 
-        is_url = db.url_exists("id", url_id)
+        url_exists = db.url_exists("id", url_id)
 
-        if is_url:
+        if url_exists:
             url = db.get_url(url_id)
             return jsonify(url), 200
         else:
@@ -40,14 +40,22 @@ def create_url():
 
         original_url = request.json["original_url"]
 
-        is_url = db.url_exists("original_url", original_url)
+        protocol, https = "https://", original_url[:8]
+            
+        is_url = True if https == protocol else False     
+        
+        url_exists = db.url_exists("original_url", original_url)
 
         if is_url:
-            message_error = {"message": "This URL exists"}
-            return jsonify(message_error), 400
+            if url_exists:
+                message_error = {"message": "This URL exists"}
+                return jsonify(message_error), 400
+            else:
+                new_url = db.create_url(original_url)
+                return jsonify(new_url), 201
         else:
-            new_url = db.create_url(original_url)
-            return jsonify(new_url), 201
+            message_error = {"message": "This not longer an URL"}
+            return jsonify(message_error), 400
 
     except:
         message_error = {"message": "Some error has occured"}
@@ -58,9 +66,9 @@ def create_url():
 def delete_url(url_id):
     try:
 
-        is_url = db.url_exists("id", url_id)
+        url_exists = db.url_exists("id", url_id)
 
-        if is_url:
+        if url_exists:
             db.delete_url(url_id)
             return jsonify({"message": "Url deleted"}), 200
         else:
