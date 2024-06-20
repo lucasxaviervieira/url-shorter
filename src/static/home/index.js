@@ -15,15 +15,20 @@ async function createUrl(original_url) {
 }
 
 function verifyResponse(responseData) {
-  const messageError = 'This URL exists'
+  const messageError = responseData.message
+  const urlExists = 'This URL exists'
+  const noHttps = 'This not longer an URL'
 
-  if (responseData.message == messageError) {
-    alert('já existe')
+  switch (messageError) {
+    case urlExists:
+      alert('URL existe')
+      break;
+    case noHttps:
+      alert('Não é uma URL')
+      break;
+    default:
+      showUrlShorted(responseData)
   }
-  else {
-    showUrlShorted(responseData)
-  }
-
 }
 
 function showUrlShorted(data) {
