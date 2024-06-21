@@ -23,11 +23,19 @@ def get_url(url_id):
         url_exists = db.url_exists("id", url_id)
 
         if url_exists:
-            url = db.get_url("id",url_id)
-            return jsonify(url), 200
+            situation = 'URL_EXISTS'
         else:
-            message_error = {"message": "This URL doesnt exists"}
-            return jsonify(message_error), 400
+            situation = 'URL_NOT_EXISTS'
+            
+        
+        match situation:
+            case 'URL_EXISTS':
+                url = db.get_url("id",url_id)
+                return jsonify(url), 200
+            case 'URL_NOT_EXISTS':
+                message_error = {"message": "This URL doesnt exists"}
+                return jsonify(message_error), 400
+
 
     except:
         message_error = {"message": "Some error has occured"}
@@ -39,24 +47,45 @@ def create_url():
     try:
 
         original_url = request.json["original_url"]
-
+                
         protocol, https = "https://", original_url[:8]
             
         is_url = True if https == protocol else False     
         
         url_exists = db.url_exists("original_url", original_url)
+        
+        decent_num_char = len(original_url) < 255
+    
+        situation = None
+        
+        if decent_num_char:
+            if is_url:
+                if url_exists:
+                    situation = 'URL_EXISTS'
+                else:                    
+                    situation = 'URL_NOT_EXISTS'
+            else:                
+                situation = 'IS_NOT_URL'
+        else:
+            situation = 'MAX_LENGTH'
 
-        if is_url:
-            if url_exists:
+        
+        match situation:
+            case 'URL_EXISTS':
                 url = db.get_url("original_url", original_url)
                 message = {"message":"This URL exists" , "data": url}
                 return jsonify(message), 200
-            else:
+            case 'URL_NOT_EXISTS':
                 new_url = db.create_url(original_url)
                 return jsonify(new_url), 200
-        else:
-            message_error = {"message": "This not longer an URL"}
-            return jsonify(message_error), 400
+            case 'IS_NOT_URL':
+                message_error = {"message": "This not longer an URL"}
+                return jsonify(message_error), 400
+            case 'MAX_LENGTH':
+                message_error = {"message": "Max 255 charapters"}
+                return jsonify(message_error), 400
+            
+
 
     except:
         message_error = {"message": "Some error has occured"}
@@ -70,11 +99,17 @@ def delete_url(url_id):
         url_exists = db.url_exists("id", url_id)
 
         if url_exists:
-            db.delete_url(url_id)
-            return jsonify({"message": "Url deleted"}), 200
+            situation = 'URL_EXISTS'
         else:
-            message_error = {"message": "This URL doesnt exists"}
-            return jsonify(message_error), 400
+            situation = 'URL_NOT_EXISTS'
+
+        match situation:
+            case 'URL_EXISTS':
+                db.delete_url(url_id)
+                return jsonify({"message": "Url deleted"}), 200
+            case 'URL_NOT_EXISTS':
+                message_error = {"message": "This URL doesnt exists"}
+                return jsonify(message_error), 400
 
     except:
         message_error = {"message": "Some error has occured"}
