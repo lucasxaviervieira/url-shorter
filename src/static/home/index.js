@@ -16,15 +16,16 @@ async function createUrl(original_url) {
 
 function verifyResponse(responseData) {
   const messageError = responseData.message
-  const urlExists = 'This URL exists'
   const noHttps = 'This not longer an URL'
+  const urlExists = 'This URL exists'
 
   switch (messageError) {
+    case noHttps:
+      alert('Não é uma URL válida')
+      break;
     case urlExists:
       alert('URL existe')
-      break;
-    case noHttps:
-      alert('Não é uma URL')
+      showUrlShorted(responseData.data)
       break;
     default:
       showUrlShorted(responseData)

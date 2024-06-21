@@ -23,7 +23,7 @@ def get_url(url_id):
         url_exists = db.url_exists("id", url_id)
 
         if url_exists:
-            url = db.get_url(url_id)
+            url = db.get_url("id",url_id)
             return jsonify(url), 200
         else:
             message_error = {"message": "This URL doesnt exists"}
@@ -48,11 +48,12 @@ def create_url():
 
         if is_url:
             if url_exists:
-                message_error = {"message": "This URL exists"}
-                return jsonify(message_error), 400
+                url = db.get_url("original_url", original_url)
+                message = {"message":"This URL exists" , "data": url}
+                return jsonify(message), 200
             else:
                 new_url = db.create_url(original_url)
-                return jsonify(new_url), 201
+                return jsonify(new_url), 200
         else:
             message_error = {"message": "This not longer an URL"}
             return jsonify(message_error), 400

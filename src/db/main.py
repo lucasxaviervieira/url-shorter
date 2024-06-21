@@ -57,8 +57,8 @@ class Database:
             url_list.append(new_url)
         return url_list
 
-    def get_url(self, id):
-        self.cur.execute(f"SELECT * FROM url WHERE id = {id};")
+    def get_url(self, attribute, value):
+        self.cur.execute(f"SELECT * FROM url WHERE {attribute} = '{value}';")
         url = self.cur.fetchone()
         new_url = self.dict_url(url)
         return new_url
@@ -85,9 +85,9 @@ class Database:
         self.cur.execute(f"DELETE FROM url WHERE id = {id};")
         self.conn.commit()
 
-    def url_exists(self, attribute, url):
+    def url_exists(self, attribute, value):
         self.cur.execute(
-            f"SELECT EXISTS (SELECT 1 FROM url WHERE {attribute} = '{url}');"
+            f"SELECT EXISTS (SELECT 1 FROM url WHERE {attribute} = '{value}');"
         )
         url_exists = self.cur.fetchone()
         return url_exists[0]
