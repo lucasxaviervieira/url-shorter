@@ -21,10 +21,10 @@ function verifyResponse(responseData) {
 
   switch (messageError) {
     case noHttps:
-      alert('Não é uma URL válida')
+      alert(noHttps)
       break;
     case urlExists:
-      alert('URL existe')
+      alert(urlExists)
       showUrlShorted(responseData.data)
       break;
     default:
