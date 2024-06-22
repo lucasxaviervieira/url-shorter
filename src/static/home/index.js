@@ -61,7 +61,6 @@ function showCopyLinkButton(originalUrl) {
 
     document.body.removeChild(tempInput);
 
-    alert('Link copied to clipboard: ' + originalUrl);
   });
 }
 
