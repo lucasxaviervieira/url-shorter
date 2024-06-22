@@ -5,7 +5,7 @@ import base64
 from db.functions import gen_qrcode as qc
 
 DB_HOST = "localhost"
-DB_NAME = "shorter-url"
+DB_NAME = "shorter_url"
 DB_USER = "postgres"
 DB_PASSWORD = "123"
 
