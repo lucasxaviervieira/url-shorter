@@ -36,13 +36,17 @@ function showUrlShorted(data) {
   const originalUrl = data.original_url
   const shortUrl = data.shorter_url
   const qrCode = data.svg_qrcode
+
+  const hiddenContent = document.getElementById('hidden-content')
   const newUrl = document.getElementById('new-url')
+
   newUrl.href = shortUrl
   newUrl.innerText = shortUrl
-  const div = newUrl.parentNode
-  div.classList.remove('cursor-default', 'opacity-0')
+
   showCopyLinkButton(originalUrl)
   showQRCode(qrCode)
+
+  hiddenContent.classList.remove('hidden')
 }
 
 function showCopyLinkButton(originalUrl) {
@@ -60,20 +64,24 @@ function showCopyLinkButton(originalUrl) {
     document.execCommand('copy');
 
     document.body.removeChild(tempInput);
-
+    
+    const copied = document.getElementById('copy-ok')
+    copied.classList.remove('hidden')
   });
 }
 
 function showQRCode(qrCode) {
   const qrCodeElement = document.getElementById('qr-code')
   qrCodeElement.innerHTML = qrCode
-  qrCodeElement.classList.remove('hidden')
 }
 
 function startShorter() {
   const form = document.getElementById('url-form')
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
+    
+    const copied = document.getElementById('copy-ok')
+    copied.classList.add('hidden')
 
     const url = document.getElementById('original-url').value;
 

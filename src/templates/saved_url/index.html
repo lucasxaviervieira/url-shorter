@@ -12,20 +12,20 @@
       }
     </style>
   </head>
-  <body>
-    <nav class="h-[5%] flex justify-center items-center">
-      <ul class="flex gap-x-2">
-        <li><a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="/">home</a></li>
-        <li><a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="/saved-url">saved-url</a></li>
+  <body class="bg-gray-800 text-white">
+    <nav class="h-[5%] p-1 flex justify-center items-center">
+      <ul class="text-2xl flex gap-x-5 ">
+        <li><a class="" href="/">home</a></li>
+        <li><a class="underline font-bold" href="/saved-url">saved-url</a></li>
     </ul>
     </nav>
-    <section class="h-[90%] overflow-y-scroll flex justify-center py-5">
+    <section class="h-[90%] overflow-y-scroll flex justify-center">
       <div
         id="saved-url"
-        class="w-[75%] grid grid-cols-1 md:grid-cols-3 gap-5"
+        class="w-[75%] grid grid-cols-1 md:grid-cols-3 gap-5 my-5"
       ></div>
     </section>
-    <footer class="h-[5%] flex justify-center items-center">
+    <footer class="bg-gray-950 h-[5%] flex justify-center items-center">
       developed by Lucas Xavier Vieira
     </footer>
   </body>
