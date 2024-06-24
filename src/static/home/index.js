@@ -33,7 +33,6 @@ function verifyResponse(responseData) {
 }
 
 function showUrlShorted(data) {
-  const originalUrl = data.original_url
   const shortUrl = data.shorter_url
   const qrCode = data.svg_qrcode
 
@@ -43,18 +42,18 @@ function showUrlShorted(data) {
   newUrl.href = shortUrl
   newUrl.innerText = shortUrl
 
-  showCopyLinkButton(originalUrl)
+  showCopyLinkButton(shortUrl)
   showQRCode(qrCode)
 
   hiddenContent.classList.remove('hidden')
 }
 
-function showCopyLinkButton(originalUrl) {
+function showCopyLinkButton(shortUrl) {
   const copyButton = document.getElementById('copy-button');
 
   copyButton.addEventListener('click', function () {
     const tempInput = document.createElement('input');
-    tempInput.value = originalUrl;
+    tempInput.value = shortUrl;
     document.body.appendChild(tempInput);
 
 

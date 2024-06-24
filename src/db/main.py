@@ -1,38 +1,17 @@
-import psycopg2
 import base64
+
+from db.functions.config import Database
 
 from db.functions import gen_qrcode as qc
 
-DB_HOST = "localhost"
-DB_NAME = "shorter_url"
-DB_USER = "postgres"
-DB_PASSWORD = "123"
+class Url(Database):
 
-
-class Database:
     def __init__(self):
-        self.host = DB_HOST
-        self.database = DB_NAME
-        self.user = DB_USER
-        self.password = DB_PASSWORD
-        self.conn = None
+        super().__init__()
 
     def start(self):
         self.connect()
         self.create_table()
-
-    def connect(self):
-        self.conn = psycopg2.connect(
-            host=self.host,
-            database=self.database,
-            user=self.user,
-            password=self.password,
-        )
-        self.cur = self.conn.cursor()
-
-    def disconnect(self):
-        self.cur.close()
-        self.conn.close()
 
     def create_table(self):
         self.cur.execute(
