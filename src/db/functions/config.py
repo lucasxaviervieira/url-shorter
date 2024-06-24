@@ -26,6 +26,3 @@ class Database:
     def disconnect(self):
         self.cur.close()
         self.conn.close()
-    
-    def test(self):
-        print('teste')
