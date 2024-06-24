@@ -1,5 +1,4 @@
 import psycopg2
-from datetime import datetime, timedelta
 import base64
 
 from db.functions import gen_qrcode as qc
@@ -53,32 +52,34 @@ class Database:
         urls = self.cur.fetchall()
         url_list = []
         for url in urls:
-            new_url = self.dict_url(url)
+            new_url = self.api_response(url)
             url_list.append(new_url)
         return url_list
 
     def get_url(self, attribute, value):
         self.cur.execute(f"SELECT * FROM url WHERE {attribute} = '{value}';")
         url = self.cur.fetchone()
-        new_url = self.dict_url(url)
+        new_url = self.api_response(url)
         return new_url
 
-    def create_url(self, original_url):
-        expiration_date = datetime.now() + timedelta(days=7)
-        svg_string = qc.generate_qr_code_with_expiry(original_url, expiration_date)
-        shorter_url = "http://127.0.0.1:5000/"
+    def create_url(self, original_url):     
+        next_id = self.get_next_id()       
+        local_url = "http://127.0.0.1:5000/"
+        shorter_url = local_url + str(next_id)
+        
+        svg_string = qc.generate_qr_code(shorter_url)
 
         self.cur.execute(
             """
             INSERT INTO url (original_url, shorter_url, svg_data)
-                VALUES (%s, %s || currval('url_id_seq'), E%s)    
+                VALUES (%s, %s, E%s)    
                 RETURNING *;
             """,
             (original_url, shorter_url, svg_string),
         )
         self.conn.commit()
         url = self.cur.fetchone()
-        new_url = self.dict_url(url)
+        new_url = self.api_response(url)
         return new_url
 
     def delete_url(self, id):
@@ -92,7 +93,7 @@ class Database:
         url_exists = self.cur.fetchone()
         return url_exists[0]
 
-    def dict_url(self, url):
+    def api_response(self, url):
         bytea = self.read_svg_bytea(url[3])
         new_url = {
             "id": url[0],
@@ -109,3 +110,9 @@ class Database:
         svg_string = decoded_data.replace('"', "'")
         svg_string = svg_string.replace("\n", "")
         return svg_string
+    
+    def get_next_id(self):
+        self.cur.execute("SELECT * from url_id_seq")
+        id = self.cur.fetchone()
+        next_id = id[0] + 1 
+        return next_id

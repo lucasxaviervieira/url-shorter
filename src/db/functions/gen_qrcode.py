@@ -1,11 +1,14 @@
 import qrcode
 import qrcode.image.svg
+from datetime import datetime, timedelta
 
 from io import BytesIO
 
 
-def generate_qr_code_with_expiry(url, expiration_date):
-    url_with_expiry = f"{url}?expiry={expiration_date.strftime('%Y-%m-%d')}"
+def generate_qr_code(url):
+    expiration_date = datetime.now() + timedelta(days=7)
+
+    url = f"{url}?expiry={expiration_date.strftime('%Y-%m-%d')}"
 
     qr = qrcode.QRCode(
         version=1,
@@ -15,7 +18,7 @@ def generate_qr_code_with_expiry(url, expiration_date):
         image_factory=qrcode.image.svg.SvgPathImage,
     )
 
-    qr.add_data(url_with_expiry)
+    qr.add_data(url)
     qr.make(fit=True)
 
     svg_bytes = BytesIO()
